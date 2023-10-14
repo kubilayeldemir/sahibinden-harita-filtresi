@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sahibinden Harita Filtresi",
-  "description": "Bu eklenti sahibinden.com sitesindeki 'Konumu ve Sokak Gurunumu' penceresindeki haritaya filtre eklemenizi saglar.",
+  "description": "Bu eklenti sahibinden.com sitesindeki haritalara filtre eklemenizi sağlar.",
   "version": "1.0",
   "permissions": [
     "activeTab"
@@ -14,9 +14,6 @@
     },
     "default_popup": "popup.html"
   },
-  "host_permissions": [
-    "https://www.sahibinden.com/*"
-  ],
   "content_scripts": [
     {
       "matches": ["*://www.sahibinden.com/*"],
