@@ -1,13 +1,30 @@
-// Listen for messages from the background script
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === "runContentScript") {
-      // Your existing content.js logic goes here
-      console.log("Content script is running!");
+
+// content.js
+// Function to run when changes are detected in the target div
+function handleChanges(mutationsList) {
+    mutationsList.forEach(mutation => {
+      // Check if the mutation is related to 'markerContainer'
+      if (mutation.target.id === 'markerContainer') {
+        // Run your script here
+        console.log('Change detected in markerContainer!');
+        // Add your script logic here
         deleteElementsByClassId("durak");
         deleteElementsByClassId("taksi");
-
-    }
-  });
+      }
+    });
+  }
+  
+  // Target node to observe for changes
+  var targetNode = document.getElementById('markerContainer');
+  
+  // Options for the observer (all changes)
+  var config = { attributes: true, childList: true, subtree: true };
+  
+  // Create an observer instance linked to the callback function
+  var observer = new MutationObserver(handleChanges);
+  
+  // Start observing the target node for configured mutations
+  observer.observe(targetNode, config);
   
 
   function deleteElementsByClassId(classId) {
@@ -18,5 +35,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         element.parentNode.removeChild(element);
     }
 }
-
-// Example: Delete elements with class ID "example"
