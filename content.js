@@ -7,7 +7,16 @@ const metroAndTrainState = {
     isOnlyMetroAndTrain: false
 };
 
-// Function to run when changes are detected in the target div
+var targetNode = document.getElementById('markerContainer');
+
+var config = { attributes: false, childList: true, subtree: false };
+var observer = new MutationObserver(handleChanges);
+if (targetNode) {
+    observer.observe(targetNode, config);
+}
+
+addActiveListItemToPoiInfo("Sadece Metro/Tren vb.", metroAndTrainState);
+
 function handleChanges(mutationsList) {
     logInDevelopment(metroAndTrainState.isOnlyMetroAndTrain)
     if (!metroAndTrainState.isOnlyMetroAndTrain) {
@@ -23,14 +32,6 @@ function handleChanges(mutationsList) {
             logInDevelopment("event num:" + eventNumber + " deletion Number: " + deletionNumber)
         }, 300);
     });
-}
-
-var targetNode = document.getElementById('markerContainer');
-
-var config = { attributes: false, childList: true, subtree: false };
-var observer = new MutationObserver(handleChanges);
-if (targetNode) {
-    observer.observe(targetNode, config);
 }
 
 function deleteElementsByClass(classNames) {
@@ -62,16 +63,12 @@ function addActiveListItemToPoiInfo(text, state) {
             logInDevelopment('Active Status:', state.isOnlyMetroAndTrain);
         });
     } else {
-        console.error('Could not find <ul> element with class "poi-info"');
+        logInDevelopment('Could not find <ul> element with class "poi-info"');
     }
 }
-
-addActiveListItemToPoiInfo("Sadece Metro/Tren vb.", metroAndTrainState);
 
 function logInDevelopment(message) {
     if (isDevelopment) {
         console.log(message);
     }
 }
-
-console.log("asdasd")
