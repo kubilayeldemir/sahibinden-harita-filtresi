@@ -4,7 +4,6 @@
   "description": "Bu eklenti sahibinden.com sitesindeki haritalara filtre eklemenizi sağlar.",
   "version": "1.0",
   "permissions": [
-    "activeTab"
   ],
   "action": {
     "default_icon": {
