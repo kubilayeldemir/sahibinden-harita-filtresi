@@ -7,13 +7,12 @@ const metroAndTrainState = {
     isOnlyMetroAndTrain: false
 };
 
-var targetNode = document.getElementById('markerContainer');
+var targetNode = null;
 
-var config = { attributes: false, childList: true, subtree: false };
+var config = { attributes: false, childList: true, subtree: true };
 var observer = new MutationObserver(handleChanges);
-if (targetNode) {
-    observer.observe(targetNode, config);
-}
+
+initTargetNodeObserver();
 
 addActiveListItemToPoiInfo("Sadece Metro/Tren vb.", metroAndTrainState);
 
@@ -27,21 +26,57 @@ function handleChanges(mutationsList) {
         clearTimeout(timeoutId);
 
         timeoutId = setTimeout(() => {
-            deleteElementsByClass(['taksi', 'durak']);
+            deleteElementsByImageSrc(['durak.png', 'taksi.png']);
             isDevelopment && deletionNumber++;
             logInDevelopment("event num:" + eventNumber + " deletion Number: " + deletionNumber)
         }, 300);
     });
 }
 
-function deleteElementsByClass(classNames) {
-    classNames.forEach(className => {
-        const elementsToRemove = targetNode.getElementsByClassName(className);
-        const elementsArray = Array.from(elementsToRemove);
+function initTargetNodeObserver() {
+    targetNode = document.getElementById('gmap');
 
-        elementsArray.forEach(element => {
-            element.parentNode.removeChild(element);
-        });
+    if (targetNode) {
+        observer.observe(targetNode, config);
+        return;
+    }
+
+    const rootObserver = new MutationObserver(() => {
+        const newTargetNode = document.getElementById('gmap');
+        if (!newTargetNode) {
+            return;
+        }
+
+        targetNode = newTargetNode;
+        observer.observe(targetNode, config);
+        rootObserver.disconnect();
+    });
+
+    rootObserver.observe(document.body, { childList: true, subtree: true });
+}
+
+function deleteElementsByImageSrc(imageNameParts) {
+    if (!targetNode) {
+        return;
+    }
+
+    const images = targetNode.querySelectorAll('img[src]');
+
+    Array.from(images).forEach(image => {
+        const imageSrc = image.getAttribute('src') || '';
+        const shouldRemove = imageNameParts.some(imageNamePart => imageSrc.includes(imageNamePart));
+
+        if (!shouldRemove) {
+            return;
+        }
+
+        const markerContainer = image.closest('div');
+        if (markerContainer && markerContainer !== targetNode && targetNode.contains(markerContainer)) {
+            markerContainer.remove();
+            return;
+        }
+
+        image.remove();
     });
 }
 
